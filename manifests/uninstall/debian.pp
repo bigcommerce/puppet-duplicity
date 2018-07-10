@@ -4,7 +4,7 @@ class duplicity::uninstall::debian {
     ensure => purged,
   }
 
-  file {'/usr/local/duplicity/':
+  file {'/opt/duplicity/':
     ensure  => absent,
     purge   => true,
     force   => true,
@@ -24,6 +24,6 @@ class duplicity::uninstall::debian {
     ensure  => absent,
     minute  => fqdn_rand(60),
     hour    => fqdn_rand(6),
-    command => '/usr/local/duplicity/duplicity-backups.sh',
+    command => '/opt/duplicity/duplicity-backups.sh',
   }
 }

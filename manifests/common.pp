@@ -17,24 +17,23 @@ class duplicity::common (
   }
 
   tidy {$duplicity::logdir :
-    age     => '1W',
+    age     => '4W',
     recurse => true,
     matches => '*.log',
   }
-
-  file {'/usr/local/duplicity/':
+  file { [
+    '/opt/duplicity',
+    '/opt/duplicity/conf',
+    '/opt/duplicity/cache'
+  ]:
     ensure  => directory,
     owner   => 'root',
     group   => 'root',
     mode    => '0750',
-    purge   => true,
-    force   => true,
-    recurse => true,
-    backup  => false,
   }
 
   $module_path = get_module_path($module_name)
-  file {'/usr/local/duplicity/duplicity-backups.sh':
+  file {'/opt/duplicity/duplicity-backups.sh':
     ensure  => file,
     owner   => 'root',
     group   => 'root',
@@ -46,6 +45,6 @@ class duplicity::common (
     ensure  => present,
     minute  => $cron_minute,
     hour    => $cron_hour,
-    command => 'nice /usr/local/duplicity/duplicity-backups.sh',
+    command => 'nice /opt/duplicity/duplicity-backups.sh',
   }
 }
