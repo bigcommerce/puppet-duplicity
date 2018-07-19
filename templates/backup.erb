@@ -1,31 +1,27 @@
 #!/bin/bash
 # File managed by Puppet
 
-if [[ ! $(ps aux|grep -E "/usr/bin/duplicity\s+.*--name=<%= @name %>.*") ]]; then
+if [[ ! $(ps aux|grep -E "/opt/duplicity\s+.*--name=<%= @name %>.*") ]]; then
 
-<% @env_var.each do |i| -%>
-export <%= i %>
-<% end -%>
+source /opt/duplicity/conf/.env
 
 duplicity --full-if-older-than <%= @full %> --name="<%= @name %>" \
-  --verbosity 0 <%= @args %> --archive-dir <%= @archive_dir %> --volsize <%= @volsize %> \
-  --include-globbing-filelist /usr/local/duplicity/<%= @name %>.include \
-  --exclude-globbing-filelist /usr/local/duplicity/<%= @name %>.exclude \
-  <%= @source %> <%= @destination %> > <%= scope.lookupvar("duplicity::logdir") %>/<%= @name %>-$(date +%F).log 2>&1
+  --verbosity 0 --progress --encrypt-key <%= @encryption_key %> <%= @args %> --archive-dir /opt/duplicity/cache --volsize <%= @volsize %> \
+  --include-filelist /opt/duplicity/conf/<%= @name %>.include \
+  --exclude-filelist /opt/duplicity/conf/<%= @name %>.exclude \
+  <%= @source %> <%= @destination %> >> <%= scope.lookupvar("duplicity::logdir") %>/<%= @name %>-$(date +%F).log 2>&1
 
 duplicity remove-older-than <%= @retention %> --name="<%= @name %>" \
   --log-file <%= scope.lookupvar("duplicity::logdir") %>/<%= @name %>-cleanup-$(date +%F).log \
-  --verbosity 0 --archive-dir <%= @archive_dir %> \
+  --verbosity 0 --archive-dir /opt/duplicity/cache \
   --force <%= @args %> <%= @destination %>
 
 duplicity cleanup --name="<%= @name %>" --force --extra-clean \
   --log-file <%= scope.lookupvar("duplicity::logdir") %>/<%= @name %>-cleanup-$(date +%F).log \
-  --verbosity 0 --archive-dir <%= @archive_dir %> \
+  --verbosity 0 --archive-dir /opt/duplicity/cache \
   <%= @args %> <%= @destination %>
 
-<% @env_var.each do |j| -%>
-unset <%= j.split('=')[0] %>
-<% end -%>
+
 
 else
 

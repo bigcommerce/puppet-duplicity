@@ -1,6 +1,6 @@
 # See README.md for details.
 class duplicity (
-  $logdir = '/var/log/duplicity',
+  $logdir = '/opt/duplicity/log',
 ) {
   case $::operatingsystem {
     'Debian', 'Ubuntu': { include ::duplicity::debian }
