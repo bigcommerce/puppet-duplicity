@@ -21,16 +21,6 @@ class duplicity::common (
     recurse => true,
     matches => '*.log',
   }
-  file { [
-    '/opt/duplicity',
-    '/opt/duplicity/conf',
-    '/opt/duplicity/cache'
-  ]:
-    ensure  => directory,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0750',
-  }
 
   $module_path = get_module_path($module_name)
   file {'/opt/duplicity/duplicity-backups.sh':
