@@ -3,15 +3,28 @@
 #
 define duplicity::backup(
   $destination,
-  $ensure         = present,
-  $source         = '/',
-  $rules          = [],
-  $retention      = '90D',
-  $full           = '15D',
-  $env_var        = [],
-  $volsize        = '200',
-  $args           = '',
-  $encryption_key = '') {
+  $ensure              = present,
+  $source              = '/',
+  $cache_storage_path  = '/opt/duplicity/cache',
+  $rules               = [],
+  $retention           = '100D',
+  $full                = '15D',
+  $env_var             = [],
+  $volsize             = '200',
+  $args                = '',
+  $encryption_key      = '' ) {
+
+  file { [
+    '/opt/duplicity',
+    '/opt/duplicity/conf',
+    "$cache_storage_path"
+  ]:
+    ensure  => directory,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0750',
+  }
+
 
   file {"/opt/duplicity/${name}.sh":
     ensure  => $ensure,
