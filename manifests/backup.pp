@@ -12,6 +12,7 @@ define duplicity::backup(
   $env_var             = [],
   $volsize             = '200',
   $args                = '',
+  $log_level           = '4',
   $encryption_key      = '' ) {
 
   file { [
