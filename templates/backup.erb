@@ -6,19 +6,19 @@ if [[ ! $(ps aux|grep -E "/opt/duplicity\s+.*--name=<%= @name %>.*") ]]; then
 source /opt/duplicity/conf/.env
 
 duplicity --full-if-older-than <%= @full %> --name="<%= @name %>" \
-  --verbosity 0 --progress --encrypt-key <%= @encryption_key %> <%= @args %> --archive-dir <%= @cache_storage_path %> --volsize <%= @volsize %> \
+  --verbosity <%= log_level %> --progress --encrypt-key <%= @encryption_key %> <%= @args %> --archive-dir <%= @cache_storage_path %> --volsize <%= @volsize %> \
   --include-filelist /opt/duplicity/conf/<%= @name %>.include \
   --exclude-filelist /opt/duplicity/conf/<%= @name %>.exclude \
   <%= @source %> <%= @destination %> >> <%= scope.lookupvar("duplicity::logdir") %>/<%= @name %>-$(date +%F).log 2>&1
 
 duplicity remove-older-than <%= @retention %> --name="<%= @name %>" \
   --log-file <%= scope.lookupvar("duplicity::logdir") %>/<%= @name %>-cleanup-$(date +%F).log \
-  --verbosity 0 --archive-dir <%= @cache_storage_path %> \
+  --verbosity <%= log_level %> --archive-dir <%= @cache_storage_path %> \
   --force <%= @args %> <%= @destination %>
 
 duplicity cleanup --name="<%= @name %>" --force --extra-clean \
   --log-file <%= scope.lookupvar("duplicity::logdir") %>/<%= @name %>-cleanup-$(date +%F).log \
-  --verbosity 0 --archive-dir <%= @cache_storage_path %> \
+  --verbosity <%= log_level %> --archive-dir <%= @cache_storage_path %> \
   <%= @args %> <%= @destination %>
 
 
